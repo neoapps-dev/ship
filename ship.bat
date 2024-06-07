@@ -61,6 +61,10 @@ if /i "%1" == "--projects" (
     call :projects %2
     goto :EOF
 )
+if /i "%1" == "--run" (
+    call :runproj %USERPROFILE%\.ship\projects\%2\%3
+    goto :EOF
+)
 gecho.dll "<white>Invalid syntax, use <dgn>ship --help <white>for help" && goto :EOF
 
 :wrong
@@ -83,6 +87,7 @@ gecho.dll "<dgn>ship --create [batch|powershell] [Name]    <white>Makes a projec
 gecho.dll "<dgn>ship --installed                             <white>displays all installed packages."
 gecho.dll "<dgn>ship --open [batch|powershell] [Name]      <white>Opens [Name] in explorer."
 gecho.dll "<dgn>ship --projects [batch|powershell]            <white>Shows projects with type Batch or PowerShell"
+gecho.dll "<dgn>ship --run [batch|powershell] [Name]           <white>Executes main.bat in [Name]"
 goto :EOF
 
 :Download
@@ -284,3 +289,11 @@ if "%packages%" == "" (
     endlocal
 )
 goto :EOF
+
+:runproj
+if exist %~1 (
+start %~1\main.bat
+gecho.dll "<green>Project has been ran in another terminal."
+) else (
+gecho.dll "<red>Project doesn't exist!"
+)
