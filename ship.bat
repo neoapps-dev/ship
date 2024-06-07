@@ -61,10 +61,6 @@ if /i "%1" == "--projects" (
     call :projects %2
     goto :EOF
 )
-if /i "%1" == "--spf" (
-    call :spf
-    goto :EOF
-)
 gecho.dll "<white>Invalid syntax, use <dgn>ship --help <white>for help" && goto :EOF
 
 :wrong
@@ -87,7 +83,6 @@ gecho.dll "<dgn>ship --create [batch|powershell] [Name]    <white>Makes a projec
 gecho.dll "<dgn>ship --installed                             <white>displays all installed packages."
 gecho.dll "<dgn>ship --open [batch|powershell] [Name]      <white>Opens [Name] in explorer."
 gecho.dll "<dgn>ship --projects [batch|powershell]            <white>Shows projects with type Batch or PowerShell"
-gecho.dll "<dgn>ship --spf                                    <white>Launches SuperFile explorer."
 goto :EOF
 
 :Download
@@ -288,8 +283,4 @@ if "%packages%" == "" (
     gecho.dll "<white>( <dgn>!count! <white>Project )"
     endlocal
 )
-goto :EOF
-
-:spf
-call lib\spf
 goto :EOF
