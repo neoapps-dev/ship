@@ -303,17 +303,25 @@ gecho.dll "<red>Project doesn't exist!"
 )
 
 :pkgdetails
+if defined %~1 (
 powershell -NoLogo -NoProfile -ExecutionPolicy Bypass -Command "Invoke-WebRequest -Uri https://shipapi.vercel.app/v1-details/%~1.json -OutFile ship.tmp">nul
 set /p tmp=<ship.tmp
 echo %tmp% | jq.dll ".name" >ship.tmp
 set /p name=<ship.tmp
 echo %tmp% | jq.dll ".author">ship.tmp
 set /p author=<ship.tmp
-
+if defined %name% (
 gecho.dll "<green>Package Details:"
 gecho.dll "<g>Package Name: <white>%name%"
 gecho.dll "<g>Package Author: <white>%author%"
 gecho.dll "<white>use <dgn>ship -i %~1 <white>to install this package."
 
 del ship.tmp
+) else (
+gecho.dll "<red>No Package Found with name '%~1'"
+)
 goto :EOF
+) else (
+gecho.dll "<red>No Package Specified."
+goto :EOF
+)
