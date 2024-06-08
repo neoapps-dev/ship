@@ -65,6 +65,10 @@ if /i "%1" == "--run" (
     call :runproj %USERPROFILE%\.ship\projects\%2\%3
     goto :EOF
 )
+if /i "%1" == "--details" (
+    call :pkgdetails %2
+    goto :EOF
+)
 gecho.dll "<white>Invalid syntax, use <dgn>ship --help <white>for help" && goto :EOF
 
 :wrong
@@ -297,3 +301,19 @@ gecho.dll "<green>Project has been ran in another terminal."
 ) else (
 gecho.dll "<red>Project doesn't exist!"
 )
+
+:pkgdetails
+powershell -NoLogo -NoProfile -ExecutionPolicy Bypass -Command "Invoke-WebRequest -Uri https://shipapi.vercel.app/v1-details/%~1.json -OutFile ship.tmp">nul
+set /p tmp=<ship.tmp
+echo %tmp% | jq.dll ".name" >ship.tmp
+set /p name=<ship.tmp
+echo %tmp% | jq.dll ".author">ship.tmp
+set /p author=<ship.tmp
+
+gecho.dll "<green>Package Details:"
+gecho.dll "<g>Package Name: <white>%name%"
+gecho.dll "<g>Package Author: <white>%author%"
+gecho.dll "<white>use <dgn>ship -i %~1 <white>to install this package."
+
+del ship.tmp
+goto :EOF
