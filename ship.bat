@@ -1,7 +1,7 @@
 @echo off & setlocal enableDelayedExpansion
 set version=0.1
-call lib\sound
-call lib\util
+call %~dp0\lib\sound
+call %~dp0\lib\util
 
 for /f %%a in ('copy /Z "%~dpf0" nul') do set "CR=%%a"
 
@@ -111,7 +111,7 @@ if %ERRORLEVEL% == 0 (
     )
 ) else (
     gecho.dll "<r>Package '%~1' not found!"
-    %@playSound% "lib\sfx\cancel.wav"
+    %@playSound% "%~dp0\lib\sfx\cancel.wav"
 )
 goto :eof
 
@@ -206,10 +206,10 @@ if not exist "%USERPROFILE%\.ship\projects\%~1\%~2" (
     goto :EOF
 )
 if /i "%~1" == "batch" (
-type lib\default-template.bat >%USERPROFILE%\.ship\projects\%~1\%~2\main.bat
+type %~dp0\lib\default-template.bat >%USERPROFILE%\.ship\projects\%~1\%~2\main.bat
 echo Made with 'ship' >%USERPROFILE%\.ship\projects\%~1\%~2\.ship
 ) else (
-type lib\default-template.ps1 >%USERPROFILE%\.ship\projects\%~1\%~2\main.ps1
+type %~dp0\lib\default-template.ps1 >%USERPROFILE%\.ship\projects\%~1\%~2\main.ps1
 echo Made with 'ship' >%USERPROFILE%\.ship\projects\%~1\%~2\.ship
 )
 gecho.dll "<green>Project has been made successfully!!"
