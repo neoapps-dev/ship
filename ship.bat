@@ -77,8 +77,16 @@ if /i "%1" == "--details" (
 goto :EOF
 
 :help
-%gecho.dll% "<dgn>ship <white>v!version!"
-%gecho.dll% "Welcome to <dgn>ship!"
+echo             /^|~~~   
+echo           ///^|      
+echo         /////^|      
+echo       ///////^|      
+echo     /////////^|      
+echo   \==========^|===/  
+echo ~~~~~~~~~~~~~~~~~~~~~    
+type %~dp0\logo
+echo.
+%gecho.dll% "<white>v!version!"
 echo.
 %gecho.dll% "Basic Commands:"
 echo.
