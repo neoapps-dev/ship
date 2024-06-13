@@ -25,7 +25,11 @@ if /i "%1" == "--help" (
 if /i "%1" == "--version" (
     goto :version
 )
-if /i "%1" == "-i" (
+if /i "%1" == "-i"(
+    call :Download %2 "%2.zip"
+    goto :EOF
+)
+if /i "%1" == "install"(
     call :Download %2 "%2.zip"
     goto :EOF
 )
@@ -33,7 +37,19 @@ if /i "%1" == "-s" (
     call :Search %2
     goto :EOF
 )
+if /i "%1" == "search" (
+    call :Search %2
+    goto :EOF
+)
 if /i "%1" == "-u" (
+    call :delete %2
+    goto :EOF
+)
+if /i "%1" == "uninstall" (
+    call :delete %2
+    goto :EOF
+)
+if /i "%1" == "delete" (
     call :delete %2
     goto :EOF
 )
@@ -45,11 +61,23 @@ if /i "%1" == "--create" (
     call :newproj %2 %3
     goto :EOF
 )
+if /i "%1" == "create" (
+    call :newproj %2 %3
+    goto :EOF
+)
+if /i "%1" == "new" (
+    call :newproj %2 %3
+    goto :EOF
+)
 if /i "%1" == "--installed" (
     call :installed
     goto :EOF
 )
 if /i "%1" == "--open" (
+    call :openproj %2 %3
+    goto :EOF
+)
+if /i "%1" == "open" (
     call :openproj %2 %3
     goto :EOF
 )
@@ -66,7 +94,15 @@ if /i "%1" == "--run" (
     call :runproj %USERPROFILE%\.ship\projects\%2\%3
     goto :EOF
 )
+if /i "%1" == "run" (
+    call :runproj %USERPROFILE%\.ship\projects\%2\%3
+    goto :EOF
+)
 if /i "%1" == "--details" (
+    call :pkgdetails %2
+    goto :EOF
+)
+if /i "%1" == "--info" (
     call :pkgdetails %2
     goto :EOF
 )
@@ -93,14 +129,15 @@ echo.
 %gecho.dll% "<dgn>ship --help    <white>displays help page."
 %gecho.dll% "<dgn>ship --version  <white>displays <dgn>ship<white>'s version."
 %gecho.dll% "<dgn>ship --all      <white>displays all the packages."
-%gecho.dll% "<dgn>ship -s PACKAGE <white>searches for PACKAGE. remember to replace it with the actual package"
-%gecho.dll% "<dgn>ship -i PACKAGE  <white>installs PACKAGE."
-%gecho.dll% "<dgn>ship -u PACKAGE  <white>uninstalls PACKAGE."
-%gecho.dll% "<dgn>ship --create [batch|powershell] [Name]    <white>Makes a project in Batch or Powershell with name"
+%gecho.dll% "<dgn>ship -s PACKAGE, ship search PACKAGE <white>searches for PACKAGE. remember to replace it with the actual package"
+%gecho.dll% "<dgn>ship -i PACKAGE, ship install PACKAGE  <white>installs PACKAGE."
+%gecho.dll% "<dgn>ship -u PACKAGE, ship uninstall PACKAGE, ship delete PACKAGE  <white>uninstalls PACKAGE."
+%gecho.dll% "<dgn>ship --create, ship create [batch|powershell] [Name]    <white>Makes a project in Batch or Powershell with name"
 %gecho.dll% "<dgn>ship --installed                             <white>displays all installed packages."
-%gecho.dll% "<dgn>ship --open [batch|powershell] [Name]      <white>Opens [Name] in explorer."
+%gecho.dll% "<dgn>ship --open, ship open [batch|powershell] [Name]      <white>Opens [Name] in explorer."
 %gecho.dll% "<dgn>ship --projects [batch|powershell]            <white>Shows projects with type Batch or PowerShell"
-%gecho.dll% "<dgn>ship --run [batch|powershell] [Name]           <white>Executes main.bat in [Name]"
+%gecho.dll% "<dgn>ship --run, ship run [batch|powershell] [Name]           <white>Executes main.bat in [Name]"
+%gecho.dll% "<dgn>ship --details PACKAGE, ship --info PACKAGE               <white>Views details for PACKAGE"
 goto :EOF
 
 :Download
