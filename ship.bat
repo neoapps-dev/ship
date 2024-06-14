@@ -4,8 +4,6 @@ call %~dp0\lib\sound
 call %~dp0\lib\util
 set gecho.dll=%~dp0\gecho.dll
 
-for /f %%a in ('copy /Z "%~dpf0" nul') do set "CR=%%a"
-
 :main
 if /i "%~n0" == "ship" (
     goto :correct
@@ -25,11 +23,11 @@ if /i "%1" == "--help" (
 if /i "%1" == "--version" (
     goto :version
 )
-if /i "%1" == "-i"(
+if /i "%1" == "-i" (
     call :Download %2 "%2.zip"
     goto :EOF
 )
-if /i "%1" == "install"(
+if /i "%1" == "install" (
     call :Download %2 "%2.zip"
     goto :EOF
 )
@@ -83,9 +81,9 @@ if /i "%1" == "open" (
 )
 if /i "%1" == "--projects" (
     if /i "%2" == "" (
-    %gecho.dll% "<r>No Project Type selected, selecting batch..."
-    call :projects batch
-    goto :EOF
+        %gecho.dll% "<r>No Project Type selected, selecting batch..."
+        call :projects batch
+        goto :EOF
     )
     call :projects %2
     goto :EOF
@@ -106,7 +104,8 @@ if /i "%1" == "--info" (
     call :pkgdetails %2
     goto :EOF
 )
-%gecho.dll% "<white>Invalid syntax, use <dgn>ship --help <white>for help" && goto :EOF
+%gecho.dll% "<white>Invalid syntax, use <dgn>ship --help <white>for help"
+goto :EOF
 
 :wrong
 %gecho.dll% "<r>ERROR: <white>Modified Version of 'ship' is installed!"
@@ -142,11 +141,11 @@ goto :EOF
 
 :Download
 %gecho.dll% "<g>Downloading package '%~1'"
-powershell -NoLogo -NoProfile -ExecutionPolicy Bypass -command "(New-Object System.Net.WebClient).DownloadFile('https://shipapi.vercel.app/v1/%~1.zip','%~dp0\temp\%~2')" >nul
+powershell -NoLogo -NoProfile -ExecutionPolicy Bypass -command "Invoke-WebRequest -Uri https://shipapi.vercel.app/v1/%~1.zip -OutFile %~dp0\%~2" >nul
 if %ERRORLEVEL% == 0 (
     %gecho.dll% "<green>Package Downloaded Successfully!"
     %gecho.dll% "<g>Extracting Package..."
-    powershell -NoLogo -NoProfile -ExecutionPolicy Bypass -Command "Expand-Archive -Path %~dp0\temp\%~2 -DestinationPath '%USERPROFILE%\.ship\packages\'" >nul
+    powershell -NoLogo -NoProfile -ExecutionPolicy Bypass -Command "Expand-Archive -Path %~dp0\%~2 -DestinationPath '%USERPROFILE%\.ship\packages\'" >nul
     if %ERRORLEVEL% == 0 (
         rm %~1.zip
         %gecho.dll% "<green>Package Installed and Ready to use!"
@@ -182,7 +181,6 @@ if "%packages%" == "" (
     %gecho.dll% "<red>No Package Found!"
 ) else (
     %gecho.dll% "<green>Package(s) Found:"
-    setlocal enabledelayedexpansion
     set count=0
     for %%p in (!packages!) do (
         set /a count+=1
@@ -236,39 +234,31 @@ if /i "%ERRORLEVEL%" == "0" (
 goto :EOF
 
 :newproj
-if not defined %~1 (
-if not defined %~2 (
-%gecho.dll% "<white>Making Project <dgn>%~2 <white>in langauge <dgn>%~1<white>..."
-%SystemRoot%\System32\timeout.exe 2>nul
-if not exist "%USERPROFILE%\.ship\projects\%~1\%~2" (
-    mkdir "%USERPROFILE%\.ship\projects\%~1\%~2" >nul 2>&1
-    if %errorlevel% equ 0 (
-        %gecho.dll% "<green>Project Created Successfully"
-        goto :EOF
+if defined %~1 if defined %~2 (
+    %gecho.dll% "<white>Making Project <dgn>%~2 <white>in langauge <dgn>%~1<white>..."
+    %SystemRoot%\System32\timeout.exe 2>nul
+    if not exist "%USERPROFILE%\.ship\projects\%~1\%~2" (
+        mkdir "%USERPROFILE%\.ship\projects\%~1\%~2" >nul 2>&1
+        if %errorlevel% equ 0 (
+            %gecho.dll% "<green>Project Created Successfully"
+        ) else (
+            %gecho.dll% "<r>Failed to create project."
+        )
     ) else (
-        %gecho.dll% "<r>Failed to create project."
-        goto :eof
+        %gecho.dll% "<r>Project Already Exist!!"
     )
+    if /i "%~1" == "batch" (
+        type %~dp0\lib\default-template.bat >%USERPROFILE%\.ship\projects\%~1\%~2\main.bat
+        echo Made with 'ship' >%USERPROFILE%\.ship\projects\%~1\%~2\.ship
+    ) else (
+        type %~dp0\lib\default-template.ps1 >%USERPROFILE%\.ship\projects\%~1\%~2\main.ps1
+        echo Made with 'ship' >%USERPROFILE%\.ship\projects\%~1\%~2\.ship
+    )
+    %gecho.dll% "<green>Project has been made successfully!!"
 ) else (
-    %gecho.dll% "<r>Project Already Exist!!"
-    goto :EOF
+    %gecho.dll% "<red>Invalid Syntax, check <dgn>ship --help<white>."
 )
-if /i "%~1" == "batch" (
-type %~dp0\lib\default-template.bat >%USERPROFILE%\.ship\projects\%~1\%~2\main.bat
-echo Made with 'ship' >%USERPROFILE%\.ship\projects\%~1\%~2\.ship
-) else (
-type %~dp0\lib\default-template.ps1 >%USERPROFILE%\.ship\projects\%~1\%~2\main.ps1
-echo Made with 'ship' >%USERPROFILE%\.ship\projects\%~1\%~2\.ship
-)
-%gecho.dll% "<green>Project has been made successfully!!"
-) else (
-%gecho.dll% "<red>Invalid Syntax, check <dgn>ship --help<white>."
 goto :EOF
-)
-) else (
-%gecho.dll% "<red>Invalid Syntax, check <dgn>ship --help<white>."
-goto :EOF
-)
 
 :installed
 %gecho.dll% "<g>Please wait..."
@@ -303,11 +293,10 @@ goto :EOF
 
 :openproj
 if exist %USERPROFILE%\.ship\projects\%~1\%~2 (
-explorer %USERPROFILE%\.ship\projects\%~1\%~2
-%gecho.dll% "<green>Project opened in Explorer"
-goto :EOF
+    explorer %USERPROFILE%\.ship\projects\%~1\%~2
+    %gecho.dll% "<green>Project opened in Explorer"
 ) else (
-%gecho.dll% "<r>Project isn't found!!"
+    %gecho.dll% "<r>Project isn't found!!"
 )
 goto :EOF
 
@@ -344,32 +333,31 @@ goto :EOF
 
 :runproj
 if exist %~1 (
-start %~1\main.bat
-%gecho.dll% "<green>Project has been ran in another terminal."
+    start %~1\main.bat
+    %gecho.dll% "<green>Project has been ran in another terminal."
 ) else (
-%gecho.dll% "<red>Project doesn't exist!"
+    %gecho.dll% "<red>Project doesn't exist!"
 )
+goto :EOF
 
 :pkgdetails
 if defined %~1 (
-powershell -NoLogo -NoProfile -ExecutionPolicy Bypass -Command "Invoke-WebRequest -Uri https://shipapi.vercel.app/v1-details/%~1.json -OutFile ship.tmp">nul
-set /p tmp=<ship.tmp
-echo %tmp% | %~dp0\jq.dll ".name" >ship.tmp
-set /p name=<ship.tmp
-echo %tmp% | %~dp0\jq.dll ".author">ship.tmp
-set /p author=<ship.tmp
-if defined %name% (
-%gecho.dll% "<green>Package Details:"
-%gecho.dll% "<g>Package Name: <white>%name%"
-%gecho.dll% "<g>Package Author: <white>%author%"
-%gecho.dll% "<white>use <dgn>ship -i %~1 <white>to install this package."
-
-del ship.tmp
+    powershell -NoLogo -NoProfile -ExecutionPolicy Bypass -Command "Invoke-WebRequest -Uri https://shipapi.vercel.app/v1-details/%~1.json -OutFile ship.tmp">nul
+    set /p tmp=<ship.tmp
+    echo %tmp% | %~dp0\jq.dll ".name" >ship.tmp
+    set /p name=<ship.tmp
+    echo %tmp% | %~dp0\jq.dll ".author">ship.tmp
+    set /p author=<ship.tmp
+    if defined %name% (
+        %gecho.dll% "<green>Package Details:"
+        %gecho.dll% "<g>Package Name: <white>%name%"
+        %gecho.dll% "<g>Package Author: <white>%author%"
+        %gecho.dll% "<white>use <dgn>ship -i %~1 <white>to install this package."
+        del ship.tmp
+    ) else (
+        %gecho.dll% "<red>No Package Found with name '%~1'"
+    )
 ) else (
-%gecho.dll% "<red>No Package Found with name '%~1'"
+    %gecho.dll% "<red>No Package Specified."
 )
 goto :EOF
-) else (
-%gecho.dll% "<red>No Package Specified."
-goto :EOF
-)
