@@ -158,7 +158,7 @@ if %ERRORLEVEL% == 0 (
     %gecho.dll% "<r>Package '%~1' not found!"
     %@playSound% "%~dp0\lib\sfx\cancel.wav"
 )
-goto :eof
+exit /b
 
 :Search
 %gecho.dll% "<g>Searching for package '%~1'"
