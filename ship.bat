@@ -147,10 +147,10 @@ if %ERRORLEVEL% == 0 (
     %gecho.dll% "<g>Extracting Package..."
     powershell -NoLogo -NoProfile -ExecutionPolicy Bypass -Command "Expand-Archive -Path %~dp0\%~2 -DestinationPath '%USERPROFILE%\.ship\packages\'" >nul
     if %ERRORLEVEL% == 0 (
-        rm %~1.zip
+        rm %~dp0\%~2
         %gecho.dll% "<green>Package Installed and Ready to use!"
     ) else (
-        rm %~1.zip
+        rm %~dp0\%~2
         %gecho.dll% "<r>Error Extracting Package."
         %gecho.dll% "<r>Error code: %ERRORLEVEL%"
     )
