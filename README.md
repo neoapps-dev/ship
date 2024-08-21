@@ -1,4 +1,9 @@
-![Gemini_Generated_Image_37r2nt37r2nt37r2](https://github.com/neoapps-dev/ship/assets/158327205/0194b025-191a-4edb-a379-8b47b13f6f02)
+# Everything has to come to an end, sadly
+This project has been deprecated on 2024/8/21 at 4:44 PM GMT+3
+This project will no longer be maintained, search for a fork (if there is).
+- NEOAPPS.
+
+
 # ship: The Ultimate Package and Project Manager for Batch File and Powershell.
 ## Authors
 ship is brought to you by:
